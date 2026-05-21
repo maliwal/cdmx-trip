@@ -1,0 +1,902 @@
+<!-- CDMX TRIP — Interactive Itinerary -->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400;1,9..144,600&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #F2E8D5;
+    --bg-2: #EADFC7;
+    --ink: #1F1A17;
+    --ink-soft: #4A3E36;
+    --terra: #B8412C;
+    --terra-deep: #8E2E1E;
+    --mustard: #D4A53A;
+    --forest: #2C5F4A;
+    --soft: #E5D7BC;
+    --border: #D8C9B0;
+    --paper: #FAF3E2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Geist', sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Subtle noise texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 1000;
+    mix-blend-mode: multiply;
+  }
+
+  .app {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+    position: relative;
+  }
+
+  /* HEADER */
+  .header {
+    padding: 36px 0 28px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .header-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header-meta::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--terra);
+    opacity: 0.3;
+  }
+
+  .header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: clamp(48px, 9vw, 76px);
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .header h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--terra);
+  }
+
+  .header-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+  }
+
+  .header-sub span:first-child { color: var(--forest); font-weight: 600; }
+
+  /* USER STRIP */
+  .user-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .user-strip strong { color: var(--ink); font-weight: 600; }
+  .user-change {
+    background: none; border: none;
+    color: var(--terra); font-family: inherit; font-size: inherit;
+    cursor: pointer; text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  /* DAY TABS */
+  .day-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin: 22px 0 32px;
+  }
+
+  .day-tab {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    padding: 14px 8px 12px;
+    cursor: pointer;
+    text-align: center;
+    font-family: 'Fraunces', serif;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .day-tab .dow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  .day-tab .date {
+    font-weight: 800;
+    font-size: 26px;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .day-tab:hover { background: var(--bg-2); }
+
+  .day-tab.active {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .day-tab.active .dow { color: var(--mustard); }
+  .day-tab.active .date { color: var(--bg); }
+
+  /* DAY HEADER */
+  .day-header {
+    margin-bottom: 28px;
+  }
+  .day-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--terra);
+    margin-bottom: 4px;
+  }
+  .day-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 34px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .day-narrative {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    max-width: 580px;
+  }
+
+  /* STOPS */
+  .stops {
+    position: relative;
+  }
+
+  .stop {
+    position: relative;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stop:last-child { border-bottom: none; }
+
+  .stop-row {
+    display: grid;
+    grid-template-columns: 70px 1fr auto;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .stop-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--terra);
+    padding-top: 4px;
+    line-height: 1.3;
+  }
+  .stop-time .duration {
+    display: block;
+    color: var(--ink-soft);
+    font-weight: 400;
+    margin-top: 2px;
+    font-size: 10px;
+  }
+
+  .stop-body { min-width: 0; }
+
+  .stop-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+
+  .stop-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .stop-meta .dot { color: var(--terra); margin: 0 6px; }
+
+  .stop-detail {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    max-width: 540px;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.35s ease, margin-top 0.35s ease;
+  }
+
+  .stop-detail.open {
+    max-height: 600px;
+    margin-top: 10px;
+  }
+
+  .stop-detail-inner {
+    padding-top: 4px;
+  }
+
+  .stop-detail .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--forest);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-top: 10px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .stop-detail .label:first-child { margin-top: 0; }
+
+  .stop-warning {
+    background: var(--mustard);
+    color: var(--ink);
+    display: inline-block;
+    padding: 3px 8px;
+    margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .stop-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+  }
+
+  .icon-btn {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s ease;
+    color: var(--ink);
+  }
+  .icon-btn:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .icon-btn svg { width: 14px; height: 14px; }
+
+  /* WHO'S IN */
+  .attendance {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .attendance-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px 5px 8px;
+    border: 1px solid var(--border);
+    background: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink);
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    user-select: none;
+  }
+  .chip .dot {
+    width: 8px; height: 8px;
+    background: var(--border);
+    border-radius: 50%;
+    transition: all 0.18s ease;
+  }
+  .chip:hover { border-color: var(--ink); }
+  .chip.in {
+    background: var(--forest);
+    color: var(--paper);
+    border-color: var(--forest);
+  }
+  .chip.in .dot { background: var(--mustard); }
+  .chip.me { font-weight: 600; }
+  .chip.me::after {
+    content: 'you';
+    margin-left: 4px;
+    font-size: 9px;
+    opacity: 0.65;
+    font-weight: 400;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(31, 26, 23, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--paper);
+    padding: 32px 28px 24px;
+    max-width: 380px;
+    width: 100%;
+    border: 1px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
+    transform: translateY(20px);
+    transition: transform 0.25s ease;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--terra);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .modal h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 26px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .modal p {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .modal input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    color: var(--ink);
+    outline: none;
+    margin-bottom: 14px;
+  }
+  .modal input:focus { border-color: var(--ink); }
+  .modal button {
+    width: 100%;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    padding: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .modal button:hover { background: var(--terra); }
+  .modal button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.06em;
+    line-height: 1.7;
+  }
+  .footer-stamp {
+    display: inline-block;
+    border: 1px solid var(--terra);
+    padding: 4px 10px;
+    color: var(--terra);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .sync-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+  }
+  .sync-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--forest);
+  }
+  .sync-dot.offline { background: var(--terra); }
+
+  /* SUMMARY BAR */
+  .summary-bar {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 16px 18px;
+    margin: 0 -20px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+  .summary-bar strong { color: var(--mustard); font-weight: 600; }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .day-content { animation: fadeIn 0.3s ease; }
+
+  /* Mobile tweaks */
+  @media (max-width: 480px) {
+    .app { padding: 0 16px 60px; }
+    .header { padding: 24px 0 20px; }
+    .stop-row { grid-template-columns: 58px 1fr auto; gap: 12px; }
+    .stop-name { font-size: 19px; }
+    .day-title { font-size: 28px; }
+  }
+</style>
+
+<div class="app">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-meta">
+      <span>Ciudad de México · 4 pax</span>
+    </div>
+    <h1>Long Weekend, <em>Roma & Condesa</em></h1>
+    <div class="header-sub">
+      <span>May 23 – 26, 2026</span>
+      <span>Hotel CondesaDF</span>
+      <span>All times CDMX local</span>
+    </div>
+  </div>
+
+  <!-- USER STRIP -->
+  <div class="user-strip">
+    <div>signed in as <strong id="userName">—</strong></div>
+    <button class="user-change" onclick="openModal(true)">change</button>
+  </div>
+
+  <!-- DAY TABS -->
+  <div class="day-tabs" id="dayTabs"></div>
+
+  <!-- SUMMARY BAR -->
+  <div class="summary-bar">
+    <span><strong>STOPS</strong> <span id="stopCount">—</span></span>
+    <span class="sync-status"><span class="sync-dot" id="syncDot"></span><span id="syncText">SYNCED</span></span>
+  </div>
+
+  <!-- DAY CONTENT -->
+  <div id="dayContent"></div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-stamp">★ Aditi's Itinerary ★</div>
+    <div>Updates sync across the group · tap a stop to expand</div>
+    <div>Walking unless noted · all reservations confirmed except Contramar (walk-in)</div>
+  </div>
+</div>
+
+<!-- NAME MODAL -->
+<div class="modal-overlay" id="nameModal">
+  <div class="modal">
+    <div class="modal-meta">CDMX · Welcome</div>
+    <h2>What's your name?</h2>
+    <p>Your name shows up on the activities you mark yourself in for, so the group knows who's coming to what.</p>
+    <input type="text" id="nameInput" placeholder="First name" autocomplete="off" maxlength="20" />
+    <button id="nameSubmit" disabled>Save & continue</button>
+  </div>
+</div>
+
+<script>
+  // ============== TRIP DATA ==============
+  const TRIP = [
+    {
+      dow: 'SAT', date: 23, label: 'Saturday',
+      title: 'Arrival',
+      narrative: "Land 5:15pm, drop bags at CondesaDF, walk 10 min to dinner. Easy first night.",
+      stops: [
+        {
+          id: 'sat-hotel', time: '5:15p', name: 'Hotel CondesaDF',
+          meta: ['CHECK-IN', 'CONDESA'], maps: 'https://maps.google.com/?cid=5467969283992143401',
+          detail: { 'address': 'Av. Veracruz 102, Roma Norte', 'note': 'Home base for all 4 nights. Rooftop bar is open late if anyone wants a nightcap.' }
+        },
+        {
+          id: 'sat-abrasamar', time: '7:30p', dur: '90 min', name: 'Abrasamar',
+          meta: ['SEAFOOD', '10 MIN WALK', 'RESERVED'], maps: 'https://maps.google.com/?cid=7980933973357267507',
+          detail: { 'address': 'Cuauhtémoc 76, Roma Nte.', 'order': 'Grilled shrimp, tuna tostada, wood-fired catch of the day.', 'note': 'Intimate fire-cooking room. Great welcome dinner.' }
+        }
+      ]
+    },
+    {
+      dow: 'SUN', date: 24, label: 'Sunday',
+      title: 'The food day, anchored by Contramar',
+      narrative: "Light breakfast & tacos to warm up, then the big leisurely Contramar lunch (2–5pm). Everything walkable.",
+      stops: [
+        {
+          id: 'sun-expendio', time: '9:00a', dur: '60 min', name: 'Expendio de Maíz',
+          meta: ['BREAKFAST', 'WALK-IN', 'CASH ONLY'], maps: 'https://maps.google.com/?cid=9706918750662237026',
+          detail: { 'order': 'Eat LIGHT — say STOP after 2-3 courses. Big day ahead.', 'note': 'No menu — they bring courses one at a time until you say stop. Get there at 9am sharp (Sun opening).' }
+        },
+        {
+          id: 'sun-maizajo', time: '11:00a', dur: '60 min', name: 'Maizajo',
+          meta: ['TACOS', 'STANDING ROOM'], maps: 'https://maps.google.com/?cid=15291814419955831194',
+          detail: { 'order': 'Split 2 tacos per person — save room for Contramar.', 'note': 'Blue corn tortillas, communal bar facing the open kitchen. Sunday-only early hours (opens 11am, every other day is 1pm).' }
+        },
+        {
+          id: 'sun-contramar', time: '1:30p', dur: '~3 hrs', name: 'Contramar',
+          meta: ['WALK-IN', 'THE BIG ONE'], maps: 'https://maps.google.com/?cid=1047725080642144831',
+          detail: { 'strategy': 'Put name down at 1:30, expect ~1hr wait Sundays. Walk to Licorería Limantour or Bistró 31 for a mezcal while you wait — they\'ll text. Seated ~2pm.', 'order': 'Tuna tostadas + pescado a la talla (whole fish, split red/green sauce) + strawberry meringue pie.', 'note': 'THE iconic CDMX lunch. Gabriela Cámara\'s 30-year-old institution. Sunday is the right day for it.' }
+        },
+        {
+          id: 'sun-cananea', time: '5:30p', dur: '90 min', name: 'Cananea',
+          meta: ['DRINKS', 'JUÁREZ'], maps: 'https://maps.google.com/?cid=14385426798792344907',
+          detail: { 'note': 'Sunday day-drinking institution. Retro vibes, pool table. Drinks only — you\'ve already eaten.' }
+        },
+        {
+          id: 'sun-orinoco', time: '8:00p', dur: '60 min', name: 'Taquería Orinoco',
+          meta: ['LATE TACOS', 'CONDESA'], maps: 'https://maps.google.com/?cid=15999079037141380312',
+          detail: { 'order': 'Al pastor with cheese. Norteña and Campechana from the specials section.', 'note': '12k reviews at 4.6. The real deal.' }
+        },
+        {
+          id: 'sun-brujas', time: '9:45p', dur: '75 min', name: 'Bar Las Brujas',
+          meta: ['SPEAKEASY', 'RESERVED'], maps: 'https://maps.google.com/?cid=16593765488911618542',
+          detail: { 'note': 'Women-owned speakeasy inside La Casa de Las Brujas. Witchy theme, every drink is custom with a comic story. Small space.' }
+        }
+      ]
+    },
+    {
+      dow: 'MON', date: 25, label: 'Monday',
+      title: 'Big tasting menu day',
+      narrative: "Slow morning (2 of 4 at Elemental), then Pujol takes the afternoon, mezcal + cocktails close it out.",
+      stops: [
+        {
+          id: 'mon-elemental', time: '11:00a', dur: '90 min', name: 'Elemental Clinic Visit',
+          meta: ['2 OF 4 ONLY', 'TBD LOCATION'],
+          detail: { 'note': 'Address TBD — confirm with the group. Plan transit time so we\'re not late for Pujol at 2:30pm.' }
+        },
+        {
+          id: 'mon-pujol', time: '2:30p', dur: '3 hrs', name: 'Pujol',
+          meta: ['TASTING MENU', 'POLANCO', 'UBER'], maps: 'https://maps.google.com/?cid=11653406765589265174',
+          detail: { 'order': 'Mole madre is the legendary course — aged years, served over fresh mole. Ask for the kitchen tour if the moment\'s right.', 'note': 'Enrique Olvera\'s flagship. Bucket-list. ~20 min Uber from Condesa.' }
+        },
+        {
+          id: 'mon-tlecan', time: '7:45p', dur: '75 min', name: 'Tlecan',
+          meta: ['MEZCAL BAR', 'WALK-IN'], maps: 'https://maps.google.com/?cid=14688874283863657510',
+          detail: { 'order': 'Tascalate Sour, Pulque Colada.', 'note': 'Top-50 cocktail bar. Aztec aesthetic, terra cotta + incense. Get there a bit early — it fills up.' }
+        },
+        {
+          id: 'mon-foma', time: '8:30p', dur: '2 hrs', name: 'FORM + MATTER',
+          meta: ['COCKTAILS', '4.8 ★'], maps: 'https://maps.google.com/?cid=3877115218737132238',
+          detail: { 'order': 'Lotta Butter, Kimlet.', 'note': 'Consistently called CDMX\'s best bar. 10-min walk from Tlecan.' }
+        }
+      ]
+    },
+    {
+      dow: 'TUE', date: 26, label: 'Tuesday',
+      title: 'Taco → long lunch → bye',
+      narrative: "Light morning taco at La Hortaliza, the proper farewell lunch at Máximo. Both walkable from hotel.",
+      stops: [
+        {
+          id: 'tue-hortaliza', time: '11:00a', dur: '60 min', name: 'Taquería La Hortaliza',
+          meta: ['TACOS GUISADOS', 'CASH', 'TINY'], maps: 'https://maps.google.com/?cid=12533172797412130614',
+          detail: { 'order': 'Chile relleno taco (battered poblano w/ cheese + tomato sauce — red salsa on side) + chicharrón.', 'note': 'Tiny ~7-seat spot. Netflix-featured. ~30 pesos each.' }
+        },
+        {
+          id: 'tue-maximo', time: '1:00p', dur: '2 hrs', name: 'Máximo',
+          meta: ['LONG LUNCH', 'RESERVED', 'ROMA'], maps: 'https://maps.google.com/?cid=7036648520158465067',
+          detail: { 'order': 'Tagliatelle oxtail, tarte Tatin.', 'note': 'Eduardo García\'s sunlit, market-driven room. 15-min walk from La Hortaliza. The proper farewell lunch.' }
+        }
+      ]
+    }
+  ];
+
+  // ============== STATE ==============
+  let me = '';
+  let activeDay = 1; // Sunday by default — most action
+  let attendees = {}; // { stopId: [names] }
+  let isOnline = true;
+
+  // ============== STORAGE ==============
+  async function loadName() {
+    try {
+      const r = await window.storage.get('me');
+      return r ? r.value : '';
+    } catch { return ''; }
+  }
+  async function saveName(name) {
+    try { await window.storage.set('me', name); } catch {}
+  }
+  async function loadAttendees() {
+    try {
+      const r = await window.storage.get('attendees', true);
+      return r ? JSON.parse(r.value) : {};
+    } catch { return {}; }
+  }
+  async function saveAttendees(data) {
+    try {
+      await window.storage.set('attendees', JSON.stringify(data), true);
+      setSync(true);
+    } catch { setSync(false); }
+  }
+
+  function setSync(ok) {
+    isOnline = ok;
+    document.getElementById('syncDot').classList.toggle('offline', !ok);
+    document.getElementById('syncText').textContent = ok ? 'SYNCED' : 'OFFLINE';
+  }
+
+  // ============== MODAL ==============
+  function openModal(force) {
+    if (!force && me) return;
+    const modal = document.getElementById('nameModal');
+    const input = document.getElementById('nameInput');
+    modal.classList.add('open');
+    input.value = me || '';
+    input.focus();
+    updateSubmitBtn();
+  }
+  function closeModal() {
+    document.getElementById('nameModal').classList.remove('open');
+  }
+  function updateSubmitBtn() {
+    const v = document.getElementById('nameInput').value.trim();
+    document.getElementById('nameSubmit').disabled = v.length < 1;
+  }
+  document.getElementById('nameInput').addEventListener('input', updateSubmitBtn);
+  document.getElementById('nameInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('nameSubmit').click();
+  });
+  document.getElementById('nameSubmit').addEventListener('click', async () => {
+    const v = document.getElementById('nameInput').value.trim();
+    if (!v) return;
+    const oldMe = me;
+    me = v;
+    document.getElementById('userName').textContent = me;
+    await saveName(me);
+    // If user changed name, migrate their attendance entries
+    if (oldMe && oldMe !== me) {
+      for (const k of Object.keys(attendees)) {
+        const idx = attendees[k].indexOf(oldMe);
+        if (idx >= 0) attendees[k][idx] = me;
+      }
+      await saveAttendees(attendees);
+    }
+    closeModal();
+    render();
+  });
+
+  // ============== RENDER ==============
+  function buildDayTabs() {
+    const c = document.getElementById('dayTabs');
+    c.innerHTML = TRIP.map((d, i) => `
+      <div class="day-tab ${i === activeDay ? 'active' : ''}" onclick="setDay(${i})">
+        <div class="dow">${d.dow}</div>
+        <div class="date">${d.date}</div>
+      </div>
+    `).join('');
+  }
+
+  function setDay(i) {
+    activeDay = i;
+    render();
+  }
+
+  function buildDay() {
+    const d = TRIP[activeDay];
+    document.getElementById('stopCount').textContent = `${d.stops.length} on ${d.label}`;
+    const html = `
+      <div class="day-content">
+        <div class="day-header">
+          <div class="day-num">Day ${activeDay + 1} of 4 · ${d.label} May ${d.date}</div>
+          <div class="day-title">${d.title}</div>
+          <div class="day-narrative">${d.narrative}</div>
+        </div>
+        <div class="stops">
+          ${d.stops.map(buildStop).join('')}
+        </div>
+      </div>
+    `;
+    document.getElementById('dayContent').innerHTML = html;
+  }
+
+  function buildStop(s) {
+    const here = attendees[s.id] || [];
+    const others = here.filter(n => n !== me);
+    const meIn = here.includes(me);
+    const allMembers = collectAllMembers();
+    return `
+      <div class="stop" id="stop-${s.id}">
+        <div class="stop-row">
+          <div class="stop-time">
+            ${s.time}
+            ${s.dur ? `<span class="duration">${s.dur}</span>` : ''}
+          </div>
+          <div class="stop-body">
+            <div class="stop-name" onclick="toggleDetail('${s.id}')">${s.name}</div>
+            <div class="stop-meta">
+              ${s.meta.map((m, i) => i === 0 ? m : `<span class="dot">·</span>${m}`).join('')}
+            </div>
+            <div class="stop-detail" id="detail-${s.id}">
+              <div class="stop-detail-inner">
+                ${Object.entries(s.detail || {}).map(([k, v]) => `
+                  <span class="label">${k}</span>${v}
+                `).join('')}
+              </div>
+            </div>
+            <div class="attendance">
+              <span class="attendance-label">Going:</span>
+              ${me ? `
+                <span class="chip me ${meIn ? 'in' : ''}" onclick="toggleMe('${s.id}')">
+                  <span class="dot"></span>${escapeHtml(me)}
+                </span>
+              ` : ''}
+              ${others.map(n => `
+                <span class="chip in" style="cursor: default;">
+                  <span class="dot"></span>${escapeHtml(n)}
+                </span>
+              `).join('')}
+              ${here.length === 0 ? '<span class="attendance-label" style="opacity:0.5">— tap to mark yourself in —</span>' : ''}
+            </div>
+          </div>
+          <div class="stop-actions">
+            ${s.maps ? `
+              <a class="icon-btn" href="${s.maps}" target="_blank" rel="noopener" title="Open in Maps">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </a>
+            ` : ''}
+            <button class="icon-btn" onclick="toggleDetail('${s.id}')" title="Toggle details">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function collectAllMembers() {
+    const set = new Set();
+    for (const k of Object.keys(attendees)) {
+      (attendees[k] || []).forEach(n => set.add(n));
+    }
+    if (me) set.add(me);
+    return [...set];
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  async function toggleMe(stopId) {
+    if (!me) { openModal(true); return; }
+    const list = attendees[stopId] || [];
+    const i = list.indexOf(me);
+    if (i >= 0) list.splice(i, 1);
+    else list.push(me);
+    attendees[stopId] = list;
+    await saveAttendees(attendees);
+    // Refresh just this stop's attendance UI
+    render();
+  }
+
+  function toggleDetail(stopId) {
+    const el = document.getElementById('detail-' + stopId);
+    if (el) el.classList.toggle('open');
+  }
+
+  function render() {
+    buildDayTabs();
+    buildDay();
+  }
+
+  // ============== INIT ==============
+  async function init() {
+    me = await loadName();
+    attendees = await loadAttendees();
+    document.getElementById('userName').textContent = me || '—';
+    render();
+    if (!me) {
+      setTimeout(() => openModal(true), 300);
+    }
+    // Poll for changes every 15s
+    setInterval(async () => {
+      const fresh = await loadAttendees();
+      if (JSON.stringify(fresh) !== JSON.stringify(attendees)) {
+        attendees = fresh;
+        render();
+      }
+    }, 15000);
+  }
+  init();
+</script>
