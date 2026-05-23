@@ -1,0 +1,793 @@
+
+<!-- saved from url=(0048)file:///Users/amaliwalair/Downloads/index_1.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400;1,9..144,600&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #F2E8D5;
+    --bg-2: #EADFC7;
+    --ink: #1F1A17;
+    --ink-soft: #4A3E36;
+    --terra: #B8412C;
+    --terra-deep: #8E2E1E;
+    --mustard: #D4A53A;
+    --forest: #2C5F4A;
+    --soft: #E5D7BC;
+    --border: #D8C9B0;
+    --paper: #FAF3E2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Geist', sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 1000;
+    mix-blend-mode: multiply;
+  }
+
+  .app {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+    position: relative;
+  }
+
+  /* HEADER */
+  .header {
+    padding: 40px 0 28px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .header-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header-meta::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--terra);
+    opacity: 0.3;
+  }
+
+  .header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: clamp(48px, 9vw, 76px);
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .header h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--terra);
+  }
+
+  .header-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+  }
+
+  .header-sub span:first-child { color: var(--forest); font-weight: 600; }
+
+  /* DAY TABS */
+  .day-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin: 28px 0 32px;
+  }
+
+  .day-tab {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    padding: 14px 8px 12px;
+    cursor: pointer;
+    text-align: center;
+    font-family: 'Fraunces', serif;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .day-tab .dow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  .day-tab .date {
+    font-weight: 800;
+    font-size: 26px;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .day-tab:hover { background: var(--bg-2); }
+
+  .day-tab.active {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .day-tab.active .dow { color: var(--mustard); }
+  .day-tab.active .date { color: var(--bg); }
+
+  /* SUMMARY BAR */
+  .summary-bar {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 16px 18px;
+    margin: 0 -20px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+  .summary-bar strong { color: var(--mustard); font-weight: 600; }
+
+  /* DAY HEADER */
+  .day-header {
+    margin-bottom: 28px;
+  }
+  .day-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--terra);
+    margin-bottom: 4px;
+  }
+  .day-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 34px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .day-narrative {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    max-width: 580px;
+  }
+
+  /* STOPS */
+  .stops { position: relative; }
+
+  .stop {
+    position: relative;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stop:last-child { border-bottom: none; }
+
+  .stop-row {
+    display: grid;
+    grid-template-columns: 70px 1fr auto;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .stop-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--terra);
+    padding-top: 4px;
+    line-height: 1.3;
+  }
+  .stop-time .duration {
+    display: block;
+    color: var(--ink-soft);
+    font-weight: 400;
+    margin-top: 2px;
+    font-size: 10px;
+  }
+
+  .stop-body { min-width: 0; cursor: pointer; }
+
+  .stop-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+
+  .stop-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+
+  .stop-meta .dot { color: var(--terra); margin: 0 6px; }
+
+  .stop-detail {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    max-width: 540px;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.35s ease, margin-top 0.35s ease;
+  }
+
+  .stop-detail.open {
+    max-height: 800px;
+    margin-top: 14px;
+  }
+
+  .stop-detail-inner {
+    padding-top: 4px;
+  }
+
+  .stop-detail .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--forest);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-top: 10px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .stop-detail .label:first-child { margin-top: 0; }
+
+  .stop-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+  }
+
+  .icon-btn {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s ease;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .icon-btn:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .icon-btn svg { width: 14px; height: 14px; }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.06em;
+    line-height: 1.7;
+  }
+  .footer-stamp {
+    display: inline-block;
+    border: 1px solid var(--terra);
+    padding: 4px 10px;
+    color: var(--terra);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .day-content { animation: fadeIn 0.3s ease; }
+
+  /* Mobile tweaks */
+  @media (max-width: 480px) {
+    .app { padding: 0 16px 60px; }
+    .header { padding: 24px 0 20px; }
+    .stop-row { grid-template-columns: 58px 1fr auto; gap: 12px; }
+    .stop-name { font-size: 19px; }
+    .day-title { font-size: 28px; }
+  }
+</style>
+
+</head><body><div class="app">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-meta">
+      <span>Ciudad de México · 4 pax</span>
+    </div>
+    <h1>Long Weekend, <em>Roma &amp; Condesa</em></h1>
+    <div class="header-sub">
+      <span>May 23 – 26, 2026</span>
+      <span>Hotel CondesaDF</span>
+      <span>All times CDMX local</span>
+    </div>
+  </div>
+
+  <!-- DAY TABS -->
+  <div class="day-tabs" id="dayTabs">
+      <div class="day-tab " onclick="setDay(0)">
+        <div class="dow">SAT</div>
+        <div class="date">23</div>
+      </div>
+    
+      <div class="day-tab active" onclick="setDay(1)">
+        <div class="dow">SUN</div>
+        <div class="date">24</div>
+      </div>
+    
+      <div class="day-tab " onclick="setDay(2)">
+        <div class="dow">MON</div>
+        <div class="date">25</div>
+      </div>
+    
+      <div class="day-tab " onclick="setDay(3)">
+        <div class="dow">TUE</div>
+        <div class="date">26</div>
+      </div>
+    </div>
+
+  <!-- SUMMARY BAR -->
+  <div class="summary-bar">
+    <span><strong id="stopCount">6 stops on Sunday</strong></span>
+    <span>TAP A STOP TO EXPAND</span>
+  </div>
+
+  <!-- DAY CONTENT -->
+  <div id="dayContent">
+      <div class="day-content">
+        <div class="day-header">
+          <div class="day-num">Day 2 of 4 · Sunday May 24</div>
+          <div class="day-title">Tacos, then take it easy</div>
+          <div class="day-narrative">Late breakfast, a relaxed taco lunch at Maizajo, then a free afternoon to shop and wander Roma &amp; Condesa. Evening picks back up with drinks and late tacos.</div>
+        </div>
+        <div class="stops">
+          
+      <div class="stop" id="stop-sun-expendio">
+        <div class="stop-row">
+          <div class="stop-time">
+            9:00a
+            <span class="duration">60 min</span>
+          </div>
+          <div class="stop-body" onclick="toggleDetail(&#39;sun-expendio&#39;)">
+            <div class="stop-name">Expendio de Maíz</div>
+            <div class="stop-meta">
+              BREAKFAST<span class="dot">·</span>WALK-IN<span class="dot">·</span>CASH ONLY
+            </div>
+            <div class="stop-detail" id="detail-sun-expendio">
+              <div class="stop-detail-inner">
+                
+                  <span class="label">order</span>No menu — they bring courses one at a time until you say stop.
+                
+                  <span class="label">note</span>Walk-in, cash only. Get there around 9am when they open. Relaxed pace today, so no need to rush off.
+                
+              </div>
+            </div>
+          </div>
+          <div class="stop-actions">
+            
+              <a class="icon-btn" href="https://maps.google.com/?cid=9706918750662237026" target="_blank" rel="noopener" title="Open in Maps">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              </a>
+            
+            <button class="icon-btn" onclick="toggleDetail(&#39;sun-expendio&#39;)" title="Toggle details">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    
+      <div class="stop" id="stop-sun-maizajo">
+        <div class="stop-row">
+          <div class="stop-time">
+            1:00p
+            <span class="duration">90 min</span>
+          </div>
+          <div class="stop-body" onclick="toggleDetail(&#39;sun-maizajo&#39;)">
+            <div class="stop-name">Maizajo</div>
+            <div class="stop-meta">
+              TACOS<span class="dot">·</span>STANDING ROOM
+            </div>
+            <div class="stop-detail" id="detail-sun-maizajo">
+              <div class="stop-detail-inner">
+                
+                  <span class="label">order</span>Blue corn tacos — their tortillas are the whole point. No rush, this is the relaxed lunch.
+                
+                  <span class="label">note</span>Communal bar facing the open kitchen. Standing room. Casual, easygoing — settle in.
+                
+              </div>
+            </div>
+          </div>
+          <div class="stop-actions">
+            
+              <a class="icon-btn" href="https://maps.google.com/?cid=15291814419955831194" target="_blank" rel="noopener" title="Open in Maps">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              </a>
+            
+            <button class="icon-btn" onclick="toggleDetail(&#39;sun-maizajo&#39;)" title="Toggle details">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    
+      <div class="stop" id="stop-sun-wander">
+        <div class="stop-row">
+          <div class="stop-time">
+            2:30p
+            <span class="duration">open</span>
+          </div>
+          <div class="stop-body" onclick="toggleDetail(&#39;sun-wander&#39;)">
+            <div class="stop-name">Roma &amp; Condesa — free afternoon</div>
+            <div class="stop-meta">
+              SHOPPING<span class="dot">·</span>WANDERING<span class="dot">·</span>NO PLANS
+            </div>
+            <div class="stop-detail" id="detail-sun-wander">
+              <div class="stop-detail-inner">
+                
+                  <span class="label">ideas</span>Parque México &amp; Parque España for a stroll, Calle Colima for boutiques, Casa Bosques or Galería OMR for design/art, Panadería Rosetta for a coffee-and-pastry break.
+                
+                  <span class="label">note</span>Deliberately unplanned. Wander, shop, nap, reset before the evening. Everything is walkable from the hotel.
+                
+              </div>
+            </div>
+          </div>
+          <div class="stop-actions">
+            
+            <button class="icon-btn" onclick="toggleDetail(&#39;sun-wander&#39;)" title="Toggle details">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    
+      <div class="stop" id="stop-sun-cananea">
+        <div class="stop-row">
+          <div class="stop-time">
+            5:30p
+            <span class="duration">90 min</span>
+          </div>
+          <div class="stop-body" onclick="toggleDetail(&#39;sun-cananea&#39;)">
+            <div class="stop-name">Cananea</div>
+            <div class="stop-meta">
+              DRINKS<span class="dot">·</span>JUÁREZ
+            </div>
+            <div class="stop-detail" id="detail-sun-cananea">
+              <div class="stop-detail-inner">
+                
+                  <span class="label">note</span>Sunday day-drinking institution. Retro vibes, pool table. Easy place to land after the afternoon wander.
+                
+              </div>
+            </div>
+          </div>
+          <div class="stop-actions">
+            
+              <a class="icon-btn" href="https://maps.google.com/?cid=14385426798792344907" target="_blank" rel="noopener" title="Open in Maps">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              </a>
+            
+            <button class="icon-btn" onclick="toggleDetail(&#39;sun-cananea&#39;)" title="Toggle details">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    
+      <div class="stop" id="stop-sun-orinoco">
+        <div class="stop-row">
+          <div class="stop-time">
+            8:00p
+            <span class="duration">60 min</span>
+          </div>
+          <div class="stop-body" onclick="toggleDetail(&#39;sun-orinoco&#39;)">
+            <div class="stop-name">Taquería Orinoco</div>
+            <div class="stop-meta">
+              LATE TACOS<span class="dot">·</span>CONDESA
+            </div>
+            <div class="stop-detail" id="detail-sun-orinoco">
+              <div class="stop-detail-inner">
+                
+                  <span class="label">order</span>Al pastor with cheese. Norteña and Campechana from the specials section.
+                
+                  <span class="label">note</span>12k reviews at 4.6. The real deal.
+                
+              </div>
+            </div>
+          </div>
+          <div class="stop-actions">
+            
+              <a class="icon-btn" href="https://maps.google.com/?cid=15999079037141380312" target="_blank" rel="noopener" title="Open in Maps">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              </a>
+            
+            <button class="icon-btn" onclick="toggleDetail(&#39;sun-orinoco&#39;)" title="Toggle details">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    
+      <div class="stop" id="stop-sun-brujas">
+        <div class="stop-row">
+          <div class="stop-time">
+            9:45p
+            <span class="duration">75 min</span>
+          </div>
+          <div class="stop-body" onclick="toggleDetail(&#39;sun-brujas&#39;)">
+            <div class="stop-name">Bar Las Brujas</div>
+            <div class="stop-meta">
+              SPEAKEASY<span class="dot">·</span>RESERVED
+            </div>
+            <div class="stop-detail" id="detail-sun-brujas">
+              <div class="stop-detail-inner">
+                
+                  <span class="label">note</span>Women-owned speakeasy inside La Casa de Las Brujas. Witchy theme, every drink is custom with a comic story. Small space.
+                
+              </div>
+            </div>
+          </div>
+          <div class="stop-actions">
+            
+              <a class="icon-btn" href="https://maps.google.com/?cid=16593765488911618542" target="_blank" rel="noopener" title="Open in Maps">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              </a>
+            
+            <button class="icon-btn" onclick="toggleDetail(&#39;sun-brujas&#39;)" title="Toggle details">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    
+        </div>
+      </div>
+    </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-stamp">★ Made for the crew ★</div>
+    <div>Walking unless noted · all reservations confirmed except Contramar (walk-in)</div>
+    <div>Tap the map pin to open any spot in Google Maps</div>
+  </div>
+</div>
+
+<script>
+  const TRIP = [
+    {
+      dow: 'SAT', date: 23, label: 'Saturday',
+      title: 'Arrival',
+      narrative: "Land 5:15pm, drop bags at CondesaDF, walk to dinner at Fugaz (6:45pm). Easy, low-stress first night.",
+      stops: [
+        {
+          id: 'sat-hotel', time: '5:15p', name: 'Hotel CondesaDF',
+          meta: ['CHECK-IN', 'CONDESA'], maps: 'https://maps.google.com/?cid=5467969283992143401',
+          detail: { 'address': 'Av. Veracruz 102, Roma Norte', 'note': 'Home base for all 4 nights. Rooftop bar is open late if anyone wants a nightcap.' }
+        },
+        {
+          id: 'sat-fugaz', time: '6:45p', dur: '90 min', name: 'Fugaz',
+          meta: ['SEAFOOD', 'WALK-IN', 'ROMA NTE.'], maps: 'https://maps.google.com/?cid=9591698456102643715',
+          detail: { 'order': 'Avocado tostada with furikake (their signature, always on the menu). House specialties: chilpachole (corn & seafood soup), gnocchi with mussels, white bean stew with clams.', 'know before you go': 'Pair your meal with wines from the sister bar/wine shop next door, Fantasma.', 'note': 'Chef Giuseppe Lacorazza sources seasonal seafood from Mercado de la Viga — homey dishes mixing Mexican influences with global flair. Open Thu–Sun, works best for a casual late lunch or dinner. Walk-in, on a busy Roma Norte avenue.' }
+        }
+      ]
+    },
+    {
+      dow: 'SUN', date: 24, label: 'Sunday',
+      title: 'Tacos, then take it easy',
+      narrative: "Late breakfast, a relaxed taco lunch at Maizajo, then a free afternoon to shop and wander Roma & Condesa. Evening picks back up with drinks and late tacos.",
+      stops: [
+        {
+          id: 'sun-expendio', time: '9:00a', dur: '60 min', name: 'Expendio de Maíz',
+          meta: ['BREAKFAST', 'WALK-IN', 'CASH ONLY'], maps: 'https://maps.google.com/?cid=9706918750662237026',
+          detail: { 'order': 'No menu — they bring courses one at a time until you say stop.', 'note': 'Walk-in, cash only. Get there around 9am when they open. Relaxed pace today, so no need to rush off.' }
+        },
+        {
+          id: 'sun-maizajo', time: '1:00p', dur: '90 min', name: 'Maizajo',
+          meta: ['TACOS', 'STANDING ROOM'], maps: 'https://maps.google.com/?cid=15291814419955831194',
+          detail: { 'order': 'Blue corn tacos — their tortillas are the whole point. No rush, this is the relaxed lunch.', 'note': 'Communal bar facing the open kitchen. Standing room. Casual, easygoing — settle in.' }
+        },
+        {
+          id: 'sun-wander', time: '2:30p', dur: 'open', name: 'Roma & Condesa — free afternoon',
+          meta: ['SHOPPING', 'WANDERING', 'NO PLANS'],
+          detail: { 'ideas': 'Parque México & Parque España for a stroll, Calle Colima for boutiques, Casa Bosques or Galería OMR for design/art, Panadería Rosetta for a coffee-and-pastry break.', 'note': 'Deliberately unplanned. Wander, shop, nap, reset before the evening. Everything is walkable from the hotel.' }
+        },
+        {
+          id: 'sun-cananea', time: '5:30p', dur: '90 min', name: 'Cananea',
+          meta: ['DRINKS', 'JUÁREZ'], maps: 'https://maps.google.com/?cid=14385426798792344907',
+          detail: { 'note': 'Sunday day-drinking institution. Retro vibes, pool table. Easy place to land after the afternoon wander.' }
+        },
+        {
+          id: 'sun-orinoco', time: '8:00p', dur: '60 min', name: 'Taquería Orinoco',
+          meta: ['LATE TACOS', 'CONDESA'], maps: 'https://maps.google.com/?cid=15999079037141380312',
+          detail: { 'order': 'Al pastor with cheese. Norteña and Campechana from the specials section.', 'note': '12k reviews at 4.6. The real deal.' }
+        },
+        {
+          id: 'sun-brujas', time: '9:45p', dur: '75 min', name: 'Bar Las Brujas',
+          meta: ['SPEAKEASY', 'RESERVED'], maps: 'https://maps.google.com/?cid=16593765488911618542',
+          detail: { 'note': 'Women-owned speakeasy inside La Casa de Las Brujas. Witchy theme, every drink is custom with a comic story. Small space.' }
+        }
+      ]
+    },
+    {
+      dow: 'MON', date: 25, label: 'Monday',
+      title: 'Big tasting menu day',
+      narrative: "Slow morning (2 of 4 at Elemental), then Pujol takes the afternoon, mezcal + cocktails close it out.",
+      stops: [
+        {
+          id: 'mon-elemental', time: '11:00a', dur: '90 min', name: 'Elemental Clinic Visit',
+          meta: ['2 OF 4 ONLY', 'TBD LOCATION'],
+          detail: { 'note': 'Address TBD — confirm with the group. Plan transit time so we\'re not late for Pujol at 2:30pm.' }
+        },
+        {
+          id: 'mon-pujol', time: '2:30p', dur: '3 hrs', name: 'Pujol',
+          meta: ['TASTING MENU', 'POLANCO', 'UBER'], maps: 'https://maps.google.com/?cid=11653406765589265174',
+          detail: { 'order': 'Mole madre is the legendary course — aged years, served over fresh mole. Ask for the kitchen tour if the moment\'s right.', 'note': 'Enrique Olvera\'s flagship. Bucket-list. ~20 min Uber from Condesa.' }
+        },
+        {
+          id: 'mon-tlecan', time: '7:45p', dur: '75 min', name: 'Tlecan',
+          meta: ['MEZCAL BAR', 'WALK-IN'], maps: 'https://maps.google.com/?cid=14688874283863657510',
+          detail: { 'order': 'Tascalate Sour, Pulque Colada.', 'note': 'Top-50 cocktail bar. Aztec aesthetic, terra cotta + incense. Get there a bit early — it fills up.' }
+        },
+        {
+          id: 'mon-foma', time: '8:30p', dur: '2 hrs', name: 'FORM + MATTER',
+          meta: ['COCKTAILS', '4.8 ★'], maps: 'https://maps.google.com/?cid=3877115218737132238',
+          detail: { 'order': 'Lotta Butter, Kimlet.', 'note': 'Consistently called CDMX\'s best bar. 10-min walk from Tlecan.' }
+        }
+      ]
+    },
+    {
+      dow: 'TUE', date: 26, label: 'Tuesday',
+      title: 'Taco → long lunch → bye',
+      narrative: "Light morning taco at La Hortaliza, the proper farewell lunch at Máximo. Both walkable from hotel.",
+      stops: [
+        {
+          id: 'tue-hortaliza', time: '11:00a', dur: '60 min', name: 'Taquería La Hortaliza',
+          meta: ['TACOS GUISADOS', 'CASH', 'TINY'], maps: 'https://maps.google.com/?cid=12533172797412130614',
+          detail: { 'order': 'Chile relleno taco (battered poblano w/ cheese + tomato sauce — red salsa on side) + chicharrón.', 'note': 'Tiny ~7-seat spot. Netflix-featured. ~30 pesos each.' }
+        },
+        {
+          id: 'tue-maximo', time: '1:00p', dur: '2 hrs', name: 'Máximo',
+          meta: ['LONG LUNCH', 'RESERVED', 'ROMA'], maps: 'https://maps.google.com/?cid=7036648520158465067',
+          detail: { 'order': 'Tagliatelle oxtail, tarte Tatin.', 'note': 'Eduardo García\'s sunlit, market-driven room. 15-min walk from La Hortaliza. The proper farewell lunch.' }
+        }
+      ]
+    }
+  ];
+
+  let activeDay = 1;
+
+  function buildDayTabs() {
+    const c = document.getElementById('dayTabs');
+    c.innerHTML = TRIP.map((d, i) => `
+      <div class="day-tab ${i === activeDay ? 'active' : ''}" onclick="setDay(${i})">
+        <div class="dow">${d.dow}</div>
+        <div class="date">${d.date}</div>
+      </div>
+    `).join('');
+  }
+
+  function setDay(i) {
+    activeDay = i;
+    render();
+    window.scrollTo({ top: document.querySelector('.summary-bar').offsetTop - 80, behavior: 'smooth' });
+  }
+
+  function buildDay() {
+    const d = TRIP[activeDay];
+    document.getElementById('stopCount').textContent = `${d.stops.length} stops on ${d.label}`;
+    const html = `
+      <div class="day-content">
+        <div class="day-header">
+          <div class="day-num">Day ${activeDay + 1} of 4 · ${d.label} May ${d.date}</div>
+          <div class="day-title">${d.title}</div>
+          <div class="day-narrative">${d.narrative}</div>
+        </div>
+        <div class="stops">
+          ${d.stops.map(buildStop).join('')}
+        </div>
+      </div>
+    `;
+    document.getElementById('dayContent').innerHTML = html;
+  }
+
+  function buildStop(s) {
+    return `
+      <div class="stop" id="stop-${s.id}">
+        <div class="stop-row">
+          <div class="stop-time">
+            ${s.time}
+            ${s.dur ? `<span class="duration">${s.dur}</span>` : ''}
+          </div>
+          <div class="stop-body" onclick="toggleDetail('${s.id}')">
+            <div class="stop-name">${s.name}</div>
+            <div class="stop-meta">
+              ${s.meta.map((m, i) => i === 0 ? m : `<span class="dot">·</span>${m}`).join('')}
+            </div>
+            <div class="stop-detail" id="detail-${s.id}">
+              <div class="stop-detail-inner">
+                ${Object.entries(s.detail || {}).map(([k, v]) => `
+                  <span class="label">${k}</span>${v}
+                `).join('')}
+              </div>
+            </div>
+          </div>
+          <div class="stop-actions">
+            ${s.maps ? `
+              <a class="icon-btn" href="${s.maps}" target="_blank" rel="noopener" title="Open in Maps">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </a>
+            ` : ''}
+            <button class="icon-btn" onclick="toggleDetail('${s.id}')" title="Toggle details">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function toggleDetail(stopId) {
+    const el = document.getElementById('detail-' + stopId);
+    if (el) el.classList.toggle('open');
+  }
+
+  function render() {
+    buildDayTabs();
+    buildDay();
+  }
+
+  render();
+</script>
+</body></html>
